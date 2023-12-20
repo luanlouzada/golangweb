@@ -1,4 +1,4 @@
-module github.com/luanlouzada/webgolang
+module github.com/luanlouzada/golangweb
 
 go 1.21.5
 
