@@ -2,36 +2,44 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"path/filepath"
+	"text/template"
+
+	"github.com/go-chi/chi/v5"
 )
 
+func executeTemplate(w http.ResponseWriter, filepath string) {
+	t, err := template.ParseFiles(filepath)
+	if err != nil {
+		log.Printf("Error parsing template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+
+	}
+	err = tpl.Execute(w, nil)
+	if err != nil {
+		log.Printf("Error executing template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+}
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w, "Hello World!")
+	tplPath := filepath.Join("templates", "home.gohtml")
+	executeTemplate(w, tplPath)
 }
 
 func contactHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w, "Contact Page")
+	tplPath := filepath.Join("templates", "contact.gohtml")
+	executeTemplate(w, tplPath)
 }
 
 func faqHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w, `<h1>FAQ Page</h1>
-<ul><li>Is this page useful?</li><li>Why is this page not useful?</li></ul>
-    `)
+	tplPath := filepath.Join("templates", "faq.gohtml")
+	executeTemplate(w, tplPath)
 }
-
-/*func pathHandler(w http.ResponseWriter, r *http.Request) {*/
-/*switch r.URL.Path {*/
-/*case "/":*/
-/*homeHandler(w, r)*/
-/*case "/contact":*/
-/*contactHandler(w, r)*/
-/*default:*/
-/*http.Error(w, "Page Not Found", http.StatusNotFound)*/
-/*}*/
-/*}*/
 
 type Router struct{}
 
@@ -49,7 +57,13 @@ func (router Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	var router Router
+	r := chi.NewRouter()
+	r.Get("/", homeHandler)
+	r.Get("/contact", contactHandler)
+	r.Get("/faq", faqHandler)
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Page Not Found", http.StatusNotFound)
+	})
 	fmt.Println("Server is listening...")
-	http.ListenAndServe(":3000", router)
+	http.ListenAndServe(":3000", r)
 }
