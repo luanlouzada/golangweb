@@ -5,25 +5,20 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"text/template"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/luanlouzada/webgolang/views"
 )
 
 func executeTemplate(w http.ResponseWriter, filepath string) {
-	t, err := template.ParseFiles(filepath)
+	t, err := views.Parse(filepath)
 	if err != nil {
 		log.Printf("Error parsing template: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 
 	}
-	err = tpl.Execute(w, nil)
-	if err != nil {
-		log.Printf("Error executing template: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
+	t.Execute(w, nil)
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
