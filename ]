@@ -1,0 +1,3 @@
+{{temmplate "header" .}}
+<h1>Testando o home</h1>
+{{template "footer" .}}
