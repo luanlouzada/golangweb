@@ -1,1 +1,12 @@
 <h1>Página do FAQ</h1>
+<ul>
+    {{range .}}
+    {{template "qa" .}}
+    {{end}}
+</ul>
+
+<pre>
+    {{ . }}</pre>
+{{define "qa"}}
+<li><b>{{.Question}}</b>{{.Answer}}</li>
+{{end}}
