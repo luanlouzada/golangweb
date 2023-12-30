@@ -20,6 +20,7 @@ func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
 	if err != nil {
 		return Template{}, fmt.Errorf("error parsing template: %w", err)
 	}
+	// Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat
 	return Template{htmlTpl: tpl}, nil
 }
 
